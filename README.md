@@ -20,7 +20,7 @@ We also investigate the computational properties (e.g., running time, variance o
 The ultimate goal is to see how these coupling algorithms perform in practice and to gain insight into the pros and cons of each method.
 
 <div align="center">
-  <img src="Cover.jpeg" alt="MC_project" width="400">
+  <img src="Images/Cover.jpeg" alt="MC_project" width="400">
 </div>
 
 <p align="center">
