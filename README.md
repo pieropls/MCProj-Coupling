@@ -29,7 +29,7 @@ The ultimate goal is to see how these coupling algorithms perform in practice an
 
 ## 📂 Files in this Repository
 
-1. **Coupling.pdf**
+1. [`Coupling.pdf`](Coupling.pdf)
    - Open-source article by Adrien Corenflos and Simo Särkkä. Available at [arXiv](https://arxiv.org/abs/2201.09585).
    - Contains the theoretical foundations, algorithms, and results on coupled sampling methods.
 
