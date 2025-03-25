@@ -33,7 +33,7 @@ The ultimate goal is to see how these coupling algorithms perform in practice an
    - Open-source article by Adrien Corenflos and Simo Särkkä. Available at [arXiv](https://arxiv.org/abs/2201.09585).
    - Contains the theoretical foundations, algorithms, and results on coupled sampling methods.
 
-2. **Coupling.ElMamoune.NY.Pelosi.ipynb**
+2. [`Coupling.ElMamoune.NY.Pelosi.ipynb`](Coupling.ElMamoune.NY.Pelosi.ipynb)
    - Our final Jupyter Notebook implementation.
    - Includes:
       - **Section 1**: *To be completed*.
