@@ -42,8 +42,6 @@ The ultimate goal is to see how these coupling algorithms perform in practice an
       - **Section 4**: *To be completed*.
       - **Section 5**: *To be completed*.
 
-3. **Cover.png**
-
 ## 📖 Credits, course description & references
 
 - **Course Instructor**: [Nicolas Chopin](https://nchopin.github.io)
