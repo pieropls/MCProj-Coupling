@@ -6,6 +6,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 
+"""
+Perform ensemble rejection coupling.
+
+Parameters:
+- Gamma: function to sample from the coupling.
+- p: target distribution.
+- q: target distribution.
+- p_hat: proposal distribution.
+- M_p: scaling factor for p.
+- M_q: scaling factor for q.
+- N: number of samples.
+- sample_from_pq: function to sample from p and q independently.
+
+Returns:
+- X: sampled value from p.
+- Y: sampled value from q.
+"""
+
 def maximal_coupling_categorical(p, q):
     """
     Sample from the maximal coupling of two categorical distributions.

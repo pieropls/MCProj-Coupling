@@ -47,7 +47,7 @@ def plot_results(X, Y, matches, mu_p, sigma_p, mu_q, sigma_q, C):
 
     # Main title
     plt.suptitle(
-        rf"Thorisson coupling between $p = \mathcal{{N}}({int(mu_p)}, {int(sigma_p**2)})$ and $q = \mathcal{{N}}({mu_q}, {sigma_q**2})$ with $C = {C}$",
+        rf"Thorisson coupling between $p = \mathcal{{N}}({int(mu_p)}, {int(sigma_p**2)})$ and $q = \mathcal{{N}}({int(mu_q)}, {int(sigma_q**2)})$ with $C = {C}$",
         fontsize=14, fontweight='bold')
     plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.show()
