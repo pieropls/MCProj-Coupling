@@ -90,7 +90,10 @@ def matrix_to_latex(M):
         " & ".join(f"{val:.2f}" for val in row) for row in M
     ]) + "\\end{bmatrix}"
 
-def run_coupling_test(mu_p, mu_q, sigma_p, sigma_q, method="rejection", N=10_000, label=None):
+def vector_to_latex(v):
+    return "\\begin{bmatrix} " + " \\\\ ".join(f"{x:.2f}" for x in v) + " \\end{bmatrix}"
+
+def run_coupling_test(mu_p, mu_q, sigma_p, sigma_q, method="rejection", N=10_000, display_output=True):
     p = {
         'pdf': lambda x: multivariate_normal.pdf(x, mean=mu_p, cov=sigma_p),
         'sample': lambda: multivariate_normal.rvs(mean=mu_p, cov=sigma_p)
@@ -136,8 +139,8 @@ def run_coupling_test(mu_p, mu_q, sigma_p, sigma_q, method="rejection", N=10_000
 
     # ------------------------ Output ------------------------
 
-    mu_p_str = f"\\mu_p = \\begin{{bmatrix}} {mu_p[0]} \\\\ {mu_p[1]} \\end{{bmatrix}}"
-    mu_q_str = f"\\mu_q = \\begin{{bmatrix}} {mu_q[0]} \\\\ {mu_q[1]} \\end{{bmatrix}}"
+    mu_p_str = f"\\mu_p = {vector_to_latex(mu_p)}"
+    mu_q_str = f"\\mu_q = {vector_to_latex(mu_q)}"
     sigma_p_str = matrix_to_latex(sigma_p)
     sigma_q_str = matrix_to_latex(sigma_q)
 
@@ -153,4 +156,7 @@ $$
 \mathbb{{P}}(X = Y) \approx {rate:.4f}
 $$
 """
-    display(Markdown(markdown))
+    if display_output:
+        display(Markdown(markdown))
+    else :
+        return rate
