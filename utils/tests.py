@@ -1,8 +1,10 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import time
 from scipy.stats import multivariate_normal, uniform
 from IPython.display import display, Markdown
 
-# ===================== CORE FUNCTIONS =====================
+# ----------------------- Core functions -----------------------
 
 def is_spd(matrix):
     return np.allclose(matrix, matrix.T) and np.all(np.linalg.eigvalsh(matrix) > 0)
@@ -79,11 +81,7 @@ def thorisson_coupling(p, q, C):
                 Y = Z
     return X, Y
 
-from scipy.stats import multivariate_normal, uniform
-from IPython.display import display, Markdown
-import numpy as np
-
-# ===================== TESTING FUNCTION =====================
+# ----------------------- Testing functions -----------------------
 
 def matrix_to_latex(M):
     return "\\begin{bmatrix}" + " \\\\ ".join([
@@ -137,7 +135,7 @@ def run_coupling_test(mu_p, mu_q, sigma_p, sigma_q, method="rejection", N=10_000
 
     rate = count_equal / N
 
-    # ------------------------ Output ------------------------
+    # ----------------------- LaTeX Output -----------------------
 
     mu_p_str = f"\\mu_p = {vector_to_latex(mu_p)}"
     mu_q_str = f"\\mu_q = {vector_to_latex(mu_q)}"
@@ -158,5 +156,167 @@ $$
 """
     if display_output:
         display(Markdown(markdown))
-    else :
+    else:
         return rate
+
+# ----------------------- Compare Coupling Methods -----------------------
+
+def compare_precision(dim, N=1000, test=run_coupling_test, ax=None):
+    """
+    Compare success rates of Rejection Coupling and Thorisson Coupling methods across different values of ρ.
+    
+    Parameters:
+    - dim: Dimension of the random vectors (e.g., 1, 2, 5, etc.).
+    - N: Number of iterations for the coupling test (default is 1000).
+    - test: Function to execute the coupling test (Rejection or Thorisson).
+    - ax: Axes object to plot the graph (if None, it creates a new figure).
+    """
+    rho_values = np.arange(-1, 3.2, 0.1)
+    success_rates_rej = []
+    success_rates_tho = []
+
+    mu_X = np.ones(dim)
+    sigma_X = np.eye(dim) if dim > 1 else np.array([[1.0]])
+
+    for rho in rho_values:
+        mu_Y = rho * mu_X
+        sigma_Y = (rho**2) * sigma_X
+
+        rate_rej = test(mu_X, mu_Y, sigma_X, sigma_Y, method="rejection", N=N, display_output=False)
+        rate_tho = test(mu_X, mu_Y, sigma_X, sigma_Y, method="thorisson", N=N, display_output=False)
+
+        success_rates_rej.append(rate_rej)
+        success_rates_tho.append(rate_tho)
+
+    if ax is None:
+        plt.figure(figsize=(9, 5))
+    ax.plot(rho_values, success_rates_rej, marker='o', color='red', label='Rejection Coupling')
+    ax.plot(rho_values, success_rates_tho, marker='*', color='green', label='Thorisson Coupling')
+    ax.set_title(f"Coupling Success Rate vs. ρ (d = {dim})", weight='bold')
+    ax.set_xlabel(r"$\rho$ values")
+    ax.set_ylabel(r"$P(X = Y)$")
+    ax.set_ylim(-0.05, 1.05)
+    ax.legend()
+    ax.grid(True)
+    if ax is None:
+        plt.tight_layout()
+        plt.show()
+
+# ----------------------- Compare Coupling Methods Time with Attempts -----------------------
+
+def compare_runtime(n_range=1000, dims=None):
+    if dims is None:
+        dims = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    
+    # Lists to store rejection attempts and runtimes for each dimension
+    rejection_attempts_rc = []
+    execution_times_rc = []
+    rejection_attempts_tc = []
+    execution_times_tc = []
+
+    for d in dims:
+        # Initialize the mean and covariance for p and q
+        mu_p = np.zeros(d)
+        mu_q = np.ones(d)
+        sigma_p = np.eye(d)
+        sigma_q = 1.5 * np.eye(d)
+
+        rejection_attempts_rc_d = []
+        runtimes_rc_d = []
+        rejection_attempts_tc_d = []
+        runtimes_tc_d = []
+
+        # Define the gamma_hat function for Rejection Coupling
+        def gamma_hat():
+            return reflection_maximal_coupling(mu_p, mu_q, compute_sigma_opt(sigma_p, sigma_q))
+
+        # Run tests for n_range times
+        for _ in range(n_range):
+            # Rejection Coupling
+            count = 0
+            X = np.zeros(d)
+            Y = np.ones(d)
+            
+            t0 = time.perf_counter()
+            while not np.allclose(X, Y):
+                X, Y = rejection_coupling(gamma_hat, {
+                    'pdf': lambda x: multivariate_normal.pdf(x, mean=mu_p, cov=sigma_p),
+                    'sample': lambda: multivariate_normal.rvs(mean=mu_p, cov=sigma_p),
+                    'M': 1.5,  # Assuming a default value for M, you can adjust based on your problem
+                    'proposal_pdf': lambda x: multivariate_normal.pdf(x, mean=mu_p, cov=sigma_p)
+                }, {
+                    'pdf': lambda x: multivariate_normal.pdf(x, mean=mu_q, cov=sigma_q),
+                    'sample': lambda: multivariate_normal.rvs(mean=mu_q, cov=sigma_q),
+                    'M': 1.5,  # Assuming a default value for M
+                    'proposal_pdf': lambda x: multivariate_normal.pdf(x, mean=mu_q, cov=sigma_q)
+                })
+                count += 1
+            t1 = time.perf_counter()
+
+            runtimes_rc_d.append(t1 - t0)
+            rejection_attempts_rc_d.append(count)
+
+            # Thorisson Coupling
+            count = 0
+            X = np.zeros(d)
+            Y = np.ones(d)
+
+            t0 = time.perf_counter()
+            while not np.allclose(X, Y):
+                X, Y = thorisson_coupling({'sample': lambda: X, 'pdf': lambda x: 1.0}, {'sample': lambda: Y, 'pdf': lambda x: 1.0}, C=1)
+                count += 1
+            t1 = time.perf_counter()
+
+            runtimes_tc_d.append(t1 - t0)
+            rejection_attempts_tc_d.append(count)
+
+        # Store the results for the current dimension
+        rejection_attempts_rc.append(rejection_attempts_rc_d)
+        execution_times_rc.append(runtimes_rc_d)
+        rejection_attempts_tc.append(rejection_attempts_tc_d)
+        execution_times_tc.append(runtimes_tc_d)
+
+    # Compute the means and IQR (Interquartile Range)
+    means_rejection = [np.mean(t) for t in execution_times_rc]
+    means_thorisson = [np.mean(t) for t in execution_times_tc]
+
+    low_rc = [np.maximum(np.mean(t) - np.percentile(t, 25), 0) for t in execution_times_rc]
+    high_rc = [np.maximum(np.percentile(t, 75) - np.mean(t), 0) for t in execution_times_rc]
+
+    low_tc = [np.maximum(np.mean(t) - np.percentile(t, 25), 0) for t in execution_times_tc]
+    high_tc = [np.maximum(np.percentile(t, 75) - np.mean(t), 0) for t in execution_times_tc]
+
+    # Plot layout using the desired format: 3 plots (first in one column, others stacked vertically in the second)
+    plt.figure(figsize=(18, 6))
+
+    # First plot (for both Rejection and Thorisson Coupling on a larger log scale)
+    plt.subplot(121)
+    plt.errorbar(dims, means_rejection, yerr=[low_rc, high_rc], fmt='o-', capsize=5, label="Rejection Coupling", color='tab:blue')
+    plt.errorbar(dims, means_thorisson, yerr=[low_tc, high_tc], fmt='s--', capsize=5, label="Thorisson Coupling", color='tab:red')
+    plt.xlabel("Dimension")
+    plt.ylabel("Average Runtime")
+    plt.title("Rejection and Thorisson Coupling", fontweight='bold')
+    plt.yscale('log')
+    plt.grid(True)
+    plt.legend()
+
+    # Second plot (for Rejection Coupling)
+    plt.subplot(222)
+    plt.errorbar(dims, means_rejection, yerr=[low_rc, high_rc], fmt='o-', capsize=5, label="Rejection Coupling", color='tab:blue')
+    plt.xlabel("Dimension")
+    plt.ylabel("Average Runtime")
+    plt.title("Rejection Coupling", fontweight='bold')
+    plt.grid(True)
+    plt.legend()
+
+    # Third plot (for Thorisson Coupling)
+    plt.subplot(224)
+    plt.errorbar(dims, means_thorisson, yerr=[low_tc, high_tc], fmt='s--', capsize=5, label="Thorisson Coupling", color='tab:red')
+    plt.xlabel("Dimension")
+    plt.ylabel("Average Runtime")
+    plt.title("Thorisson Coupling", fontweight='bold')
+    plt.grid(True)
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
