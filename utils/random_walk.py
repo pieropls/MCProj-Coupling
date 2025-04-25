@@ -28,8 +28,8 @@ def plot_coupled_rwm(dimensions, sigma=0.5, n_iter=300, coupled_rwm=None):
             ax.plot(np.arange(len(y_chain)), y_chain[:, 0], label='Y chain', color='orange')
             ax.scatter(0, x_chain[0, 0], c='blue', label='Start X')
             ax.scatter(0, y_chain[0, 0], c='red', label='Start Y')
-            ax.set_xlabel('Step')
-            ax.set_ylabel('Value')
+            ax.set_xlabel('Iterations')
+            ax.set_ylabel('Values')
         else:
             ax.plot(x_chain[:, 0], x_chain[:, 1], label='X chain', color='blue')
             ax.plot(y_chain[:, 0], y_chain[:, 1], label='Y chain', color='orange')
@@ -38,7 +38,7 @@ def plot_coupled_rwm(dimensions, sigma=0.5, n_iter=300, coupled_rwm=None):
             ax.set_xlabel('Dim 1')
             ax.set_ylabel('Dim 2')
 
-        ax.set_title(f"d = {d}, Meeting time = {meeting_time}")
+        ax.set_title(f"d = {d}, Meeting time = {meeting_time}", weight='bold')
         ax.legend()
         ax.grid(True)
 

@@ -4,11 +4,11 @@
 - **Course**: Simulation and Monte Carlo Methods (2nd Semester, ENSAE Paris)
 - **Authors**: Piero PELOSI, Omar EL MAMOUNE, Sarakpy NY
 
-## 🧪 Project Overview
+## Project Overview
 
 This project explores how to construct a **joint distribution** $(X,Y)$ for two given probability distributions $p$ and $q$ such that:
    - $X \sim p$, $Y \sim q$
-   - $\mathbb{P}(X = Y) \geq 0$
+   - $\mathbb{P}(X = Y) > 0$
 
 Our work is based on the ideas from the paper [*The Coupled Rejection Sampler*](https://arxiv.org/abs/2201.09585) by Adrien Corenflos and Simo Särkkä (2022). We compare the proposed approach (the **Coupled Rejection Sampler** and its **Ensemble** variant) with a simpler but classical approach, **Thorisson’s algorithm** (Appendix I in the paper).
 
@@ -27,22 +27,32 @@ The ultimate goal is to see how these coupling algorithms perform in practice an
   <sub>Cover generated with assistance from OpenAI's DALL·E.</sub>
 </p>
 
-## 📂 Files in this Repository
+## Repository structure
 
-1. [`Coupling.pdf`](Coupling.pdf)
-   - Open-source article by Adrien Corenflos and Simo Särkkä. Available at [arXiv](https://arxiv.org/abs/2201.09585).
-   - Contains the theoretical foundations, algorithms, and results on coupled sampling methods.
+```
+Coupling/
+│
+├── Coupling-code.ipynb                    # Final Jupyter notebook
+│
+├── project/
+│   ├── Coupling-final-presentation.pdf    # Final slide deck
+│   ├── Coupling.pdf                       # Main paper on The Coupled Rejection Sampler
+│   └── Task.pdf                           # Task assignment
+│
+├── pseudo-code/                           # Visual pseudocode
+│   ├── Cover.jpeg                         # AI-generated project cover image
+│   ├── EnsembleRejectionCoupling.algo.png
+│   ├── ReflectionMaximalCoupling.png
+│   ├── RejectionCoupling.algo.png
+│   └── Thorisson.algo.png
+│
+├── utils/                                 # Python utility scripts
+│   ├── random_walk.py
+│   ├── rejection_coupling_plot.py
+│   └── tests.py
+```
 
-2. [`Coupling.ElMamoune.NY.Pelosi.ipynb`](Coupling.ElMamoune.NY.Pelosi.ipynb)
-   - Our final Jupyter Notebook implementation.
-   - Includes:
-      - **Section 1**: *To be completed*.
-      - **Section 2**: *To be completed*.
-      - **Section 3**: *To be completed*.
-      - **Section 4**: *To be completed*.
-      - **Section 5**: *To be completed*.
-
-## 📖 Credits, course description & references
+## Credits, course description & references
 
 - **Course Instructor**: [Nicolas Chopin](https://nchopin.github.io)
 - **Tutorials & Project Supervision**: Yvann Le Fay
@@ -58,14 +68,14 @@ The **literature available** for this project:
    - Corenflos, A. and Särkkä, S. (2022). *The Coupled Rejection Sampler*. [arXiv](https://arxiv.org/abs/2201.09585).
    - Thorisson, H. (2000). *Coupling, Stationarity, and Regeneration*. Springer.
 
-## 📌 How to Use
+## How to Use
 
-1. **Clone this repository** to your local machine.
-2. Open the Jupyter Notebook `Coupling.ElMamoune.NY.Pelosi.ipynb`.
-3. Run each section in order.
-4. Adjust parameters (dimensions, distributions, number of samples) as desired.
-5. Observe the outputs: acceptance probabilities, run times, coupling probabilities, and other statistics.
+1. Clone this repository to your local machine.
+2. Navigate to the root directory and open the Jupyter notebook `Coupling-code.ipynb`.
+3. Run the notebook sequentially. Some cells may take up to 2 minutes depending on the algorithm and settings.
+4. You can customize parameters such as dimension, target distribution, and number of samples directly within the notebook.
+5. Results include visualizations of acceptance rates, coupling probabilities, and runtime comparisons.
 
-## 📝 Final Grade
+## Final Grade
 
-We received a final grade of *XX.XX*/20, equivalent to a *X.X*/4.0 GPA.
+We received a final grade of **XX.XX/20**, which corresponds to a **X.X/4.0 GPA**.
