@@ -204,7 +204,7 @@ def compare_precision(dim, N=1000, test=run_coupling_test, ax=None):
 
 # ----------------------- Compare Coupling Methods Time with Attempts -----------------------
 
-def compare_runtime(n_range=1000, dims=None):
+def compare_runtime(n_range=2000, dims=None):
     if dims is None:
         dims = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     

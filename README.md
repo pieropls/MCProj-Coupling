@@ -8,7 +8,7 @@
 
 This project explores how to construct a **joint distribution** $(X,Y)$ for two given probability distributions $p$ and $q$ such that:
    - $X \sim p$, $Y \sim q$
-   - $\mathbb{P}(X = Y)$ is made as large as possible
+   - $\mathbb{P}(X = Y) \geq 0$
 
 Our work is based on the ideas from the paper [*The Coupled Rejection Sampler*](https://arxiv.org/abs/2201.09585) by Adrien Corenflos and Simo Särkkä (2022). We compare the proposed approach (the **Coupled Rejection Sampler** and its **Ensemble** variant) with a simpler but classical approach, **Thorisson’s algorithm** (Appendix I in the paper).
 
