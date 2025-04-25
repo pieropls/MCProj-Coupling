@@ -71,7 +71,7 @@ The **literature available** for this project:
 ## How to Use
 
 1. Clone this repository to your local machine.
-2. Navigate to the root directory and open the Jupyter notebook `Coupling-code.ipynb`.
+2. Navigate to the root directory and open the Jupyter notebook [`Coupling-code.ipynb`](Coupling-code.ipynb).
 3. Run the notebook sequentially. Some cells may take up to 2 minutes depending on the algorithm and settings.
 4. You can customize parameters such as dimension, target distribution, and number of samples directly within the notebook.
 5. Results include visualizations of acceptance rates, coupling probabilities, and runtime comparisons.
