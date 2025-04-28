@@ -202,7 +202,7 @@ def compare_precision(dim, N=1000, test=run_coupling_test, ax=None):
         plt.tight_layout()
         plt.show()
 
-# ----------------------- Compare Coupling Methods Time with Attempts -----------------------
+# ----------------------- Compare Coupling Methods Time -----------------------
 
 def compare_runtime(n_range=2000, dims=None):
     if dims is None:
@@ -220,16 +220,23 @@ def compare_runtime(n_range=2000, dims=None):
         runtimes_rc_d = []
         runtimes_tc_d = []
 
+        sigma_hat = compute_sigma_opt(sigma_p, sigma_q)
+        M_p, M_q = domination_constants(sigma_hat, sigma_p, sigma_q)
+
         def gamma_hat():
-            return reflection_maximal_coupling(mu_p, mu_q, compute_sigma_opt(sigma_p, sigma_q))
+            return reflection_maximal_coupling(mu_p, mu_q, sigma_hat)
 
         p = {
             'pdf': lambda x: multivariate_normal.pdf(x, mean=mu_p, cov=sigma_p),
-            'sample': lambda: multivariate_normal.rvs(mean=mu_p, cov=sigma_p)
+            'sample': lambda: multivariate_normal.rvs(mean=mu_p, cov=sigma_p),
+            'proposal_pdf': lambda x: multivariate_normal.pdf(x, mean=mu_p, cov=sigma_hat),
+            'M': M_p
         }
         q = {
             'pdf': lambda x: multivariate_normal.pdf(x, mean=mu_q, cov=sigma_q),
-            'sample': lambda: multivariate_normal.rvs(mean=mu_q, cov=sigma_q)
+            'sample': lambda: multivariate_normal.rvs(mean=mu_q, cov=sigma_q),
+            'proposal_pdf': lambda x: multivariate_normal.pdf(x, mean=mu_q, cov=sigma_hat),
+            'M': M_q
         }
 
         for _ in range(n_range):
@@ -237,18 +244,8 @@ def compare_runtime(n_range=2000, dims=None):
             X = np.zeros(d)
             Y = np.ones(d)
             t0 = time.perf_counter()
-            while not np.allclose(X, Y, atol=1e-10):
-                X, Y = rejection_coupling(gamma_hat, {
-                    'pdf': lambda x: multivariate_normal.pdf(x, mean=mu_p, cov=sigma_p),
-                    'sample': lambda: multivariate_normal.rvs(mean=mu_p, cov=sigma_p),
-                    'M': 1.5,
-                    'proposal_pdf': lambda x: multivariate_normal.pdf(x, mean=mu_p, cov=sigma_p)
-                }, {
-                    'pdf': lambda x: multivariate_normal.pdf(x, mean=mu_q, cov=sigma_q),
-                    'sample': lambda: multivariate_normal.rvs(mean=mu_q, cov=sigma_q),
-                    'M': 1.5,
-                    'proposal_pdf': lambda x: multivariate_normal.pdf(x, mean=mu_q, cov=sigma_q)
-                })
+            while not np.allclose(X, Y, atol=1e-8):
+                X, Y = rejection_coupling(gamma_hat, p, q)
             t1 = time.perf_counter()
             runtimes_rc_d.append(t1 - t0)
 
@@ -294,7 +291,7 @@ def compare_runtime(n_range=2000, dims=None):
     plt.grid(True)
     plt.legend()
 
-    # Second plot (zoom on Rejection Coupling only)
+    # Second plot (zoom on Rejection Coupling)
     plt.subplot(222)
     plt.errorbar(dims, means_rejection, yerr=[low_rc, high_rc], fmt='o-', capsize=5, label="Rejection Coupling", color='tab:blue')
     plt.xlabel("Dimension")
@@ -303,7 +300,7 @@ def compare_runtime(n_range=2000, dims=None):
     plt.grid(True)
     plt.legend()
 
-    # Third plot (zoom on Thorisson Coupling only)
+    # Third plot (zoom on Thorisson Coupling)
     plt.subplot(224)
     plt.errorbar(dims, means_thorisson, yerr=[low_tc, high_tc], fmt='s--', capsize=5, label="Thorisson Coupling", color='tab:red')
     plt.xlabel("Dimension")
