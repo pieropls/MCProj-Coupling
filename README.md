@@ -78,4 +78,4 @@ The **literature available** for this project:
 
 ## Final Grade
 
-We received a final grade of **XX.XX/20**, which corresponds to a **X.X/4.0 GPA**.
+We received a final grade of **17/20**, which corresponds to a **4.0/4.0 GPA**.
